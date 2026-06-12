@@ -46,6 +46,8 @@
 		]
 	},
 	"devDependencies": {
+		"@emnapi/core": "1.11.0",
+		"@emnapi/runtime": "1.11.0",
 		"@n8n/node-cli": "*",
 		"@types/node": "^22.10.0",
 		"eslint": "9.29.0",
