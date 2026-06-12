@@ -139,13 +139,9 @@ export const TOOLS: ToolDef[] = [
 		name: 'Get Session Screenshot',
 		action: 'Screenshot the current page of a session',
 		description: "Capture la page courante d'une session multi-étapes, sans step d'agent",
-		transport: 'rest',
-		rest: {
-			method: 'POST',
-			path: (p) => `/ui/api/sessions/${encodeURIComponent(String(p.session_id ?? ''))}/screenshot`,
-			pathParams: ['session_id'],
-			hasBody: false,
-		},
+		// MCP plutôt que REST : l'endpoint REST ignore full_page (toujours full-page),
+		// le tool MCP l'honore. Voir README.
+		transport: 'mcp',
 	},
 	{
 		resource: 'session',

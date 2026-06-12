@@ -3,7 +3,7 @@
 	"version": "0.1.0",
 	"description": "n8n community node for browser-use-cdp-orchestrator (agents web browser-use pilotés en CDP) — généré depuis les schémas Zod de l'orchestrateur",
 	"license": "MIT",
-	"homepage": "https://github.com/docloulou/browser-use-cdp-orchestrator",
+	"homepage": "https://github.com/docloulou/n8n-nodes-browser-use-orchestrator#readme",
 	"keywords": [
 		"n8n-community-node-package",
 		"browser-use",
@@ -17,7 +17,10 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/docloulou/browser-use-cdp-orchestrator.git"
+		"url": "git+https://github.com/docloulou/n8n-nodes-browser-use-orchestrator.git"
+	},
+	"bugs": {
+		"url": "https://github.com/docloulou/n8n-nodes-browser-use-orchestrator/issues"
 	},
 	"scripts": {
 		"generate": "tsx scripts/generate-schemas.ts",

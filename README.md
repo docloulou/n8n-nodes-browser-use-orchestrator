@@ -60,7 +60,7 @@ plus adaptée par opération.
 | Job | `await_job` | MCP | Attend la fin d'un job et renvoie son résultat. |
 | Job | `cancel_job` | REST | Annule un job en cours. |
 | Job | `list_jobs` | REST | Jobs, sessions ouvertes et capacité navigateur. |
-| Session | `get_session_screenshot` | REST | Capture la page courante d'une session. |
+| Session | `get_session_screenshot` | MCP | Capture la page courante d'une session (honore `full_page`). |
 | Session | `close_session` | REST | Ferme une session persistante. |
 | Secret | `list_secrets` | MCP | Noms des secrets disponibles. |
 | Profile | `list_profiles` | MCP | Liste des profils navigateur. |
@@ -197,9 +197,8 @@ npm run dev        # n8n local avec hot-reload
 - **MCP stateless** : le client envoie un `tools/call` JSON-RPC unique à `POST /mcp` ;
   la réponse arrive en flux SSE et est parsée pour en extraire le résultat. Le délai
   d'attente HTTP est calé sur `wait_seconds`.
-- **`get_session_screenshot` (REST)** : l'endpoint REST capture toujours la page entière ;
-  le paramètre `full_page` est donc sans effet par cette voie. Pour l'honorer, passer ce
-  tool en `transport: 'mcp'` dans `registry.ts`.
+- **`get_session_screenshot`** passe par **MCP** (et non l'API REST) car l'endpoint REST
+  capture toujours la page entière et ignore `full_page` ; le tool MCP, lui, l'honore.
 - **Champs dynamiques `fields`** : saisis en JSON (ex. `{"prix": "number: prix en euros"}`).
 - **Champs liste** (`secrets`, `allowed_domains`) : ajout de valeurs multiples (rendu en tableau).
 

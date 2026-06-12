@@ -1,5 +1,5 @@
 {
-	"node": "n8n-nodes-base.browserUseOrchestrator",
+	"node": "n8n-nodes-browser-use-orchestrator.browserUseOrchestrator",
 	"nodeVersion": "1.0",
 	"codexVersion": "1.0",
 	"categories": ["Development", "Developer Tools"],
