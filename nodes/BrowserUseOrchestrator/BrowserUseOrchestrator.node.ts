@@ -1,4 +1,5 @@
 import type {
+	IDataObject,
 	IExecuteFunctions,
 	INodeExecutionData,
 	INodeProperties,
@@ -10,7 +11,10 @@ import { NodeApiError, NodeConnectionTypes, NodeOperationError } from 'n8n-workf
 
 import { buildFieldDefs } from './properties';
 import { findTool, getInputJsonSchema, RESOURCES, TOOLS } from './registry';
-import { collectArgs, mcpCall, restCall } from './transport';
+import { collectArgs, launchAsync, mcpCall, restCall, runJobToCompletion } from './transport';
+
+/** Budget d'attente par défaut (s) en mode synchrone. */
+const DEFAULT_SYNC_MAX_WAIT_SECONDS = 300;
 
 /**
  * Construit la liste des propriétés du node :
@@ -78,6 +82,43 @@ function buildProperties(): INodeProperties[] {
 		}
 	}
 
+	// Choix synchrone/asynchrone pour les opérations qui lancent un job.
+	const jobOps = TOOLS.filter((tool) => tool.producesJob).map((tool) => tool.operation);
+	if (jobOps.length) {
+		properties.push(
+			{
+				displayName: 'Execution Mode',
+				name: 'executionMode',
+				type: 'options',
+				noDataExpression: true,
+				options: [
+					{
+						name: 'Asynchronous (Return Job ID)',
+						value: 'async',
+						description: 'Lance le job et rend la main immédiatement avec un job_id (à suivre via Await Job)',
+					},
+					{
+						name: 'Synchronous (Wait for Result)',
+						value: 'sync',
+						description: "Attend la fin du job et renvoie son résultat (relance Await Job en interne jusqu'à la fin ou l'expiration de Max Wait)",
+					},
+				],
+				default: 'sync',
+				displayOptions: { show: { operation: jobOps } },
+			},
+			{
+				displayName: 'Max Wait (Seconds)',
+				name: 'syncMaxWaitSeconds',
+				type: 'number',
+				typeOptions: { minValue: 0 },
+				default: DEFAULT_SYNC_MAX_WAIT_SECONDS,
+				description:
+					"Mode synchrone : durée totale max d'attente avant de rendre la main. Si le job n'est pas fini, le node renvoie l'état courant (avec job_id) ; le job continue côté serveur et reste récupérable via Await Job.",
+				displayOptions: { show: { operation: jobOps, executionMode: ['sync'] } },
+			},
+		);
+	}
+
 	return properties;
 }
 
@@ -113,8 +154,26 @@ export class BrowserUseOrchestrator implements INodeType {
 				}
 
 				const args = collectArgs(this, i, tool);
-				const data =
-					tool.transport === 'rest' ? await restCall(this, tool, args) : await mcpCall(this, tool, args);
+				let data: IDataObject;
+
+				if (tool.producesJob) {
+					const executionMode = this.getNodeParameter('executionMode', i, 'sync') as string;
+					if (executionMode === 'async') {
+						data = await launchAsync(this, tool, args);
+					} else {
+						const maxWait = this.getNodeParameter(
+							'syncMaxWaitSeconds',
+							i,
+							DEFAULT_SYNC_MAX_WAIT_SECONDS,
+						) as number;
+						data = await runJobToCompletion(this, tool, args, maxWait);
+					}
+				} else {
+					data =
+						tool.transport === 'rest'
+							? await restCall(this, tool, args)
+							: await mcpCall(this, tool, args);
+				}
 
 				returnData.push({ json: data ?? {}, pairedItem: { item: i } });
 			} catch (error) {

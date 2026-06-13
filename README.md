@@ -192,6 +192,17 @@ npm run dev        # n8n local avec hot-reload
 
 ## Notes & limites
 
+- **Execution Mode (synchrone / asynchrone)** : les opérations qui lancent un job
+  (`Run Task Agent`, `Run Vision Agent`, `Fetch Page`, `Run Session Step`) exposent un
+  sélecteur **Execution Mode**.
+  - **Synchronous (Wait for Result)** *(défaut)* : le node attend la fin du job et
+    renvoie son résultat. Il lance le job puis, si l'agent dépasse `wait_seconds`,
+    relance `Await Job` en interne jusqu'au statut terminal ou jusqu'à l'expiration de
+    **Max Wait (Seconds)**. Si le budget expire avant la fin, le node renvoie l'état
+    courant (avec `job_id`) ; le job continue côté serveur et reste récupérable via
+    l'opération **Await Job**.
+  - **Asynchronous (Return Job ID)** : le node force `wait_seconds=0` et rend la main
+    immédiatement avec le `job_id` à suivre via **Await Job**.
 - **Zod v4 requis** par `config.ts` (`z.toJSONSchema`, `z.strictObject`…). Il reste en
   **devDependency** : le node n'a **aucune dépendance runtime** (contrainte des community nodes n8n).
 - **MCP stateless** : le client envoie un `tools/call` JSON-RPC unique à `POST /mcp` ;

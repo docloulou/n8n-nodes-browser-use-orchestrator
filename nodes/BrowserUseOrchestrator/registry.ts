@@ -32,6 +32,13 @@ export interface ToolDef {
 	description: string;
 	transport: Transport;
 	rest?: RestConfig;
+	/**
+	 * Vrai si l'opération lance un job asynchrone : la réponse peut être soit le
+	 * résultat final (status terminal), soit un `job_id` avec status=running si
+	 * l'agent dépasse `wait_seconds`. Ces opérations exposent le choix
+	 * synchrone/asynchrone côté node (cf. `executionMode`).
+	 */
+	producesJob?: boolean;
 }
 
 export interface ResourceDef {
@@ -65,6 +72,7 @@ export const TOOLS: ToolDef[] = [
 		description: 'Tâche web autonome en langage naturel (naviguer, cliquer, remplir, extraire)',
 		transport: 'rest',
 		rest: launch('run_task_agent'),
+		producesJob: true,
 	},
 	{
 		resource: 'agent',
@@ -74,6 +82,7 @@ export const TOOLS: ToolDef[] = [
 		description: "Capture full-page d'une URL + description par un LLM vision",
 		transport: 'rest',
 		rest: launch('run_vision_agent'),
+		producesJob: true,
 	},
 	{
 		resource: 'agent',
@@ -83,6 +92,7 @@ export const TOOLS: ToolDef[] = [
 		description: "Lecture rapide d'une page en markdown, sans boucle d'agent ni LLM",
 		transport: 'rest',
 		rest: launch('fetch_page'),
+		producesJob: true,
 	},
 	{
 		resource: 'agent',
@@ -92,6 +102,7 @@ export const TOOLS: ToolDef[] = [
 		description: "Une étape d'un scénario multi-étapes dans un navigateur persistant",
 		transport: 'rest',
 		rest: launch('run_session_step'),
+		producesJob: true,
 	},
 
 	// --- Job (suivi, transport REST /ui/api/jobs/* + state) ---
