@@ -2,13 +2,23 @@ import type { IDataObject, IExecuteFunctions, IHttpRequestOptions } from 'n8n-wo
 import { NodeOperationError } from 'n8n-workflow';
 
 import { buildFieldDefs, type FieldDef } from './properties';
-import { getInputJsonSchema, type ToolDef } from './registry';
+import { findTool, getInputJsonSchema, type ToolDef } from './registry';
 
 export const CREDENTIALS_NAME = 'browserUseOrchestratorApi';
 
 const ADDITIONAL_FIELDS = 'additionalFields';
 const DEFAULT_WAIT_SECONDS = 120;
 const MAX_TIMEOUT_SECONDS = 660;
+
+/** Borne haute d'attente synchrone d'un seul appel (cf. orchestrator/config.ts). */
+const MAX_WAIT_SECONDS = 600;
+
+/** Statuts terminaux d'un job : plus rien à attendre. */
+const TERMINAL_STATUSES = new Set(['done', 'error', 'cancelled']);
+
+function isTerminal(state: IDataObject): boolean {
+	return typeof state.status === 'string' && TERMINAL_STATUSES.has(state.status);
+}
 
 function baseUrlFrom(credentials: IDataObject): string {
 	return String(credentials.baseUrl ?? '').replace(/\/+$/, '');
@@ -210,4 +220,51 @@ export async function mcpCall(
 	} catch {
 		return { text };
 	}
+}
+
+/**
+ * Mode SYNCHRONE pour une opération qui lance un job : lance puis attend la fin.
+ *
+ * Le serveur attend déjà jusqu'à `wait_seconds` côté launch ; s'il dépasse, il
+ * renvoie un `job_id` avec status=running. On enchaîne alors des `await_job`
+ * (chacun plafonné à `MAX_WAIT_SECONDS`) jusqu'au statut terminal ou jusqu'à
+ * épuisement du budget total `maxWaitSeconds`. Si le budget expire avant la fin,
+ * on renvoie le dernier état connu (avec son `job_id`) : le job continue côté
+ * serveur et reste récupérable via l'opération Await Job.
+ */
+export async function runJobToCompletion(
+	ctx: IExecuteFunctions,
+	tool: ToolDef,
+	args: IDataObject,
+	maxWaitSeconds: number,
+): Promise<IDataObject> {
+	const deadline = Date.now() + Math.max(0, maxWaitSeconds) * 1000;
+
+	let state = await restCall(ctx, tool, args);
+	if (isTerminal(state) || typeof state.job_id !== 'string') return state;
+
+	const awaitTool = findTool('await_job');
+	if (!awaitTool) return state;
+
+	while (!isTerminal(state)) {
+		const remaining = Math.ceil((deadline - Date.now()) / 1000);
+		if (remaining <= 0) break;
+		const window = Math.min(remaining, MAX_WAIT_SECONDS);
+		state = await mcpCall(ctx, awaitTool, { job_id: state.job_id, wait_seconds: window });
+	}
+
+	return state;
+}
+
+/**
+ * Mode ASYNCHRONE : lance sans attendre le résultat. On force `wait_seconds=0`
+ * pour que le serveur renvoie immédiatement le `job_id` (status=running) ;
+ * l'opération Await Job permettra de récupérer le résultat plus tard.
+ */
+export async function launchAsync(
+	ctx: IExecuteFunctions,
+	tool: ToolDef,
+	args: IDataObject,
+): Promise<IDataObject> {
+	return restCall(ctx, tool, { ...args, wait_seconds: 0 });
 }
