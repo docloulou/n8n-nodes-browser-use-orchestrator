@@ -104,6 +104,26 @@ export const TOOLS: ToolDef[] = [
 		rest: launch('run_session_step'),
 		producesJob: true,
 	},
+	// Stagehand : exposé UNIQUEMENT par le serveur MCP (pas de route REST générique
+	// `/ui/api/launch/run_stagehand_agent` — côté REST, l'UI passe par un formulaire
+	// par agent `stagehand:<agent>`). On le pilote donc via MCP, comme await_job.
+	{
+		resource: 'agent',
+		operation: 'run_stagehand_agent',
+		name: 'Run Stagehand Agent',
+		action: 'Run a hand-written Stagehand agent',
+		description: 'Lance un agent Stagehand fait main (TypeScript) choisi par son nom',
+		transport: 'mcp',
+		producesJob: true,
+	},
+	{
+		resource: 'agent',
+		operation: 'list_stagehand_agents',
+		name: 'List Stagehand Agents',
+		action: 'List available Stagehand agents',
+		description: 'Agents Stagehand découverts (nom, description, schéma de paramètres)',
+		transport: 'mcp',
+	},
 
 	// --- Job (suivi, transport REST /ui/api/jobs/* + state) ---
 	{

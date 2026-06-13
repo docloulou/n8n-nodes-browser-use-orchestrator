@@ -223,6 +223,20 @@ export async function mcpCall(
 }
 
 /**
+ * Lance un job via le transport du tool : REST (`/ui/api/launch/*`) pour les
+ * agents browser-use, MCP (`tools/call`) pour ceux que l'API REST n'expose pas
+ * sous une route générique (ex: `run_stagehand_agent`). Les deux renvoient le
+ * même état de job (`job_id`, `status`, …).
+ */
+async function launchCall(
+	ctx: IExecuteFunctions,
+	tool: ToolDef,
+	args: IDataObject,
+): Promise<IDataObject> {
+	return tool.transport === 'mcp' ? mcpCall(ctx, tool, args) : restCall(ctx, tool, args);
+}
+
+/**
  * Mode SYNCHRONE pour une opération qui lance un job : lance puis attend la fin.
  *
  * Le serveur attend déjà jusqu'à `wait_seconds` côté launch ; s'il dépasse, il
@@ -240,7 +254,7 @@ export async function runJobToCompletion(
 ): Promise<IDataObject> {
 	const deadline = Date.now() + Math.max(0, maxWaitSeconds) * 1000;
 
-	let state = await restCall(ctx, tool, args);
+	let state = await launchCall(ctx, tool, args);
 	if (isTerminal(state) || typeof state.job_id !== 'string') return state;
 
 	const awaitTool = findTool('await_job');
@@ -266,5 +280,5 @@ export async function launchAsync(
 	tool: ToolDef,
 	args: IDataObject,
 ): Promise<IDataObject> {
-	return restCall(ctx, tool, { ...args, wait_seconds: 0 });
+	return launchCall(ctx, tool, { ...args, wait_seconds: 0 });
 }

@@ -493,3 +493,62 @@ export const createProfileOutput = z.object({
     id: z.string().describe("Id du profil créé, à passer en profile_id aux tools run_*"),
     name: z.string().nullable(),
 });
+
+// ---------------------------------------------------------------------------
+// Agents Stagehand (TypeScript, faits main) : list_stagehand_agents / run_stagehand_agent
+// ---------------------------------------------------------------------------
+
+/** Input du tool run_stagehand_agent : on choisit l'agent, le reste est optionnel. */
+export const runStagehandAgentInput = z.strictObject({
+    agent: z
+        .string()
+        .min(1)
+        .describe(
+            "Nom de l'agent Stagehand à lancer (cf list_stagehand_agents). " +
+                "Les agents sont écrits en TypeScript dans stagehand/agents/ et découverts automatiquement.",
+        ),
+    input: z
+        .record(z.string(), z.unknown())
+        .optional()
+        .describe(
+            "Paramètres de l'agent, selon SON schéma (cf input_schema de list_stagehand_agents). " +
+                "Souvent vide : la plupart des agents ne demandent rien d'autre que d'être choisis.",
+        ),
+    model: modelField.describe(
+        "Id du modèle LLM pour cet agent (même endpoint/clé que le .env). " +
+            "Omis : STAGEHAND_MODEL puis OPENAI_MODEL du .env.",
+    ),
+    profile_id: profileIdField,
+    proxy_country: proxyCountryField,
+    wait_seconds: waitSecondsField(DEFAULT_LAUNCH_WAIT_SECONDS),
+});
+
+/** Résumé d'un agent Stagehand exposé par list_stagehand_agents. */
+export const stagehandAgentSummarySchema = z.object({
+    name: z.string().describe("À passer en `agent` à run_stagehand_agent"),
+    title: z.string(),
+    description: z.string(),
+    input_schema: z
+        .unknown()
+        .describe("JSON Schema (draft-7) des paramètres de l'agent (à fournir dans `input`)"),
+});
+
+export const listStagehandAgentsOutput = z.object({
+    agents: z.array(stagehandAgentSummarySchema).describe("Agents Stagehand découverts dans stagehand/agents/"),
+});
+
+/**
+ * Schéma d'entrée d'un agent Stagehand pour les FORMULAIRES UI : ses propres
+ * paramètres + les champs communs (modèle, profil, proxy, attente). Le tool MCP
+ * garde ces champs communs à plat (l'agent ne voit que son `input`).
+ */
+export function stagehandFormInput<S extends z.ZodObject<z.ZodRawShape>>(agentInput: S) {
+    return agentInput.extend({
+        model: modelField.describe(
+            "Id du modèle LLM (même endpoint/clé que le .env). Omis : STAGEHAND_MODEL puis OPENAI_MODEL.",
+        ),
+        profile_id: profileIdField,
+        proxy_country: proxyCountryField,
+        wait_seconds: waitSecondsField(DEFAULT_LAUNCH_WAIT_SECONDS),
+    });
+}

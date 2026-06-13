@@ -217,6 +217,48 @@ export const SCHEMAS: Record<string, JsonSchemaObject> = {
 		],
 		"additionalProperties": false
 	},
+	"run_stagehand_agent": {
+		"$schema": "http://json-schema.org/draft-07/schema#",
+		"type": "object",
+		"properties": {
+			"agent": {
+				"type": "string",
+				"minLength": 1,
+				"description": "Nom de l'agent Stagehand à lancer (cf list_stagehand_agents). Les agents sont écrits en TypeScript dans stagehand/agents/ et découverts automatiquement."
+			},
+			"input": {
+				"description": "Paramètres de l'agent, selon SON schéma (cf input_schema de list_stagehand_agents). Souvent vide : la plupart des agents ne demandent rien d'autre que d'être choisis.",
+				"type": "object",
+				"propertyNames": {
+					"type": "string"
+				},
+				"additionalProperties": {}
+			},
+			"model": {
+				"description": "Id du modèle LLM pour cet agent (même endpoint/clé que le .env). Omis : STAGEHAND_MODEL puis OPENAI_MODEL du .env.",
+				"type": "string"
+			},
+			"profile_id": {
+				"description": "Id d'un profil navigateur browser-use à charger dans la session (cookies, localStorage et connexions conservés d'un navigateur à l'autre). Créer/retrouver les profils via create_profile / list_profiles. Omis : navigateur vierge.",
+				"type": "string"
+			},
+			"proxy_country": {
+				"description": "Code pays du proxy du navigateur pour CE job (ex: \"fr\", \"us\", \"de\") — utile pour le contenu géo-restreint. Omis : BROWSER_PROXY_COUNTRY du .env.",
+				"type": "string",
+				"pattern": "^[a-zA-Z]{2}$"
+			},
+			"wait_seconds": {
+				"description": "Attente synchrone max (défaut 90s, max 600s). Si l'agent finit à temps, le résultat est renvoyé directement. Sinon tu reçois un job_id : reviens dessus avec await_job (PAS de polling en boucle). 0 = lancer sans attendre.",
+				"type": "integer",
+				"minimum": 0,
+				"maximum": 600
+			}
+		},
+		"required": [
+			"agent"
+		],
+		"additionalProperties": false
+	},
 	"await_job": {
 		"$schema": "http://json-schema.org/draft-07/schema#",
 		"type": "object",

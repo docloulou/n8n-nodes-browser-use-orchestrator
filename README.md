@@ -57,6 +57,8 @@ plus adaptée par opération.
 | Agent | `run_vision_agent` | REST | Capture full-page + description par un LLM vision. |
 | Agent | `fetch_page` | REST | Lecture rapide d'une page en markdown (sans boucle d'agent). |
 | Agent | `run_session_step` | REST | Une étape d'un scénario multi-étapes (navigateur persistant). |
+| Agent | `run_stagehand_agent` | MCP | Lance un agent Stagehand fait main (TypeScript) choisi par son nom. |
+| Agent | `list_stagehand_agents` | MCP | Liste les agents Stagehand découverts et leurs paramètres. |
 | Job | `await_job` | MCP | Attend la fin d'un job et renvoie son résultat. |
 | Job | `cancel_job` | REST | Annule un job en cours. |
 | Job | `list_jobs` | REST | Jobs, sessions ouvertes et capacité navigateur. |
