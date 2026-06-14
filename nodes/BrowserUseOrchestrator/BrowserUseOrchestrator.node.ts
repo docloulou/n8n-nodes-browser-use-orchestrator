@@ -22,8 +22,9 @@ const DEFAULT_SYNC_MAX_WAIT_SECONDS = 300;
  *  - 1 sélecteur "Operation" par resource,
  *  - les paramètres de chaque tool, dérivés des schémas Zod de l'orchestrateur.
  *
- * Tout est généré au chargement du module : re-coller `orchestrator/config.ts`
- * suffit à propager un changement de schéma (les champs apparaissent seuls).
+ * Tout est généré au chargement du module : mettre à jour le submodule
+ * (`git submodule update --remote`) suffit à propager un changement de schéma
+ * (les champs apparaissent seuls).
  */
 function buildProperties(): INodeProperties[] {
 	const properties: INodeProperties[] = [

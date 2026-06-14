@@ -10,7 +10,7 @@ const ADDITIONAL_FIELDS = 'additionalFields';
 const DEFAULT_WAIT_SECONDS = 120;
 const MAX_TIMEOUT_SECONDS = 660;
 
-/** Borne haute d'attente synchrone d'un seul appel (cf. orchestrator/config.ts). */
+/** Borne haute d'attente synchrone d'un seul appel (cf. browser-use-cdp-orchestrator/config.ts). */
 const MAX_WAIT_SECONDS = 600;
 
 /** Statuts terminaux d'un job : plus rien à attendre. */

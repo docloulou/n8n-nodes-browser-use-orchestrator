@@ -3,10 +3,10 @@ import type { INodeProperties } from 'n8n-workflow';
 /**
  * Conversion JSON Schema (draft-7) -> propriétés n8n.
  *
- * Les schémas viennent de `orchestrator/config.ts` (Zod, copié verbatim depuis
- * le repo browser-use-cdp-orchestrator) convertis via `z.toJSONSchema` — la même
- * source que l'UI web de l'orchestrateur. Ainsi, modifier un paramètre côté
- * orchestrateur = re-coller `config.ts` + rebuild, sans toucher ce fichier.
+ * Les schémas viennent de `browser-use-cdp-orchestrator/config.ts` (Zod)
+ * convertis via `z.toJSONSchema` — la même source que l'UI web de l'orchestrateur.
+ * Ainsi, modifier un paramètre côté orchestrateur = mettre à jour le submodule + rebuild,
+ * sans toucher ce fichier.
  */
 
 export type FieldKind = 'string' | 'number' | 'boolean' | 'stringArray' | 'record';

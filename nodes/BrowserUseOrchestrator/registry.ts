@@ -6,9 +6,9 @@ import { SCHEMAS, type JsonSchemaObject } from './schemas.generated';
  * C'est le SEUL endroit qui liste explicitement les actions : il mappe chaque
  * opération vers son transport (REST `/ui/api/*` ou MCP `/mcp`) et sa route.
  * Les PARAMÈTRES, eux, sont dérivés des schémas Zod de
- * `orchestrator/config.ts`, figés en JSON Schema dans `schemas.generated.ts`
- * (cf. `properties.ts`). Ajouter un paramètre à un tool existant ne demande
- * donc QUE de re-coller `config.ts` puis relancer le build.
+ * `browser-use-cdp-orchestrator/config.ts`, figés en JSON Schema dans `schemas.generated.ts`
+ * (cf. `properties.ts`). Ajouter un paramètre à un tool ne demande
+ * donc QUE de mettre à jour le submodule puis relancer le build.
  */
 
 export type Transport = 'rest' | 'mcp';

@@ -1,67 +1,58 @@
 {
-	"name": "n8n-nodes-browser-use-orchestrator",
-	"version": "0.3.0",
-	"description": "n8n community node for browser-use-cdp-orchestrator (agents web browser-use pilotés en CDP) — généré depuis les schémas Zod de l'orchestrateur",
-	"license": "MIT",
-	"homepage": "https://github.com/docloulou/n8n-nodes-browser-use-orchestrator#readme",
-	"keywords": [
-		"n8n-community-node-package",
-		"browser-use",
-		"mcp",
-		"automation",
-		"cdp"
-	],
-	"author": {
-		"name": "lucas z",
-		"email": "lucas.zerbib@gmail.com"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/docloulou/n8n-nodes-browser-use-orchestrator.git"
-	},
-	"bugs": {
-		"url": "https://github.com/docloulou/n8n-nodes-browser-use-orchestrator/issues"
-	},
-	"scripts": {
-		"generate": "tsx scripts/generate-schemas.ts",
-		"build": "npm run generate && n8n-node build",
-		"build:watch": "tsc --watch",
-		"dev": "npm run generate && n8n-node dev",
-		"lint": "n8n-node lint",
-		"lint:fix": "n8n-node lint --fix",
-		"release": "n8n-node release",
-		"prepublishOnly": "npm run generate && n8n-node prerelease"
-	},
-	"files": [
-		"dist"
-	],
-	"publishConfig": {
-		"access": "public",
-		"provenance": true
-	},
-	"n8n": {
-		"n8nNodesApiVersion": 1,
-		"strict": true,
-		"credentials": [
-			"dist/credentials/BrowserUseOrchestratorApi.credentials.js"
-		],
-		"nodes": [
-			"dist/nodes/BrowserUseOrchestrator/BrowserUseOrchestrator.node.js"
-		]
-	},
-	"devDependencies": {
-		"@emnapi/core": "1.11.0",
-		"@emnapi/runtime": "1.11.0",
-		"@n8n/node-cli": "*",
-		"@types/node": "^22.10.0",
-		"eslint": "9.29.0",
-		"prettier": "3.6.2",
-		"release-it": "^19.0.4",
-		"tsx": "^4.20.6",
-		"typescript": "5.9.2",
-		"zod": "^4.4.3"
-	},
-	"peerDependencies": {
-		"n8n-workflow": "*"
-	}
+  "name": "n8n-nodes-browser-use-orchestrator",
+  "version": "0.3.0",
+  "description": "n8n community node for browser-use-cdp-orchestrator (agents web browser-use pilotés en CDP) — généré depuis les schémas Zod de l'orchestrateur",
+  "license": "MIT",
+  "homepage": "https://github.com/docloulou/n8n-nodes-browser-use-orchestrator#readme",
+  "keywords": [
+    "n8n-community-node-package",
+    "browser-use",
+    "mcp",
+    "automation",
+    "cdp"
+  ],
+  "author": { "name": "lucas z", "email": "lNop@gmail.com" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/docloulou/n8n-nodes-browser-use-orchestrator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/docloulou/n8n-nodes-browser-use-orchestrator/issues"
+  },
+  "scripts": {
+    "generate": "tsx scripts/generate-schemas.ts",
+    "build": "npm run generate && n8n-node build",
+    "build:watch": "tsc --watch",
+    "dev": "npm run generate && n8n-node dev",
+    "lint": "n8n-node lint",
+    "lint:fix": "n8n-node lint --fix",
+    "release": "n8n-node release",
+    "prepublishOnly": "npm run generate && n8n-node prerelease",
+    "submodule:update": "git submodule update --remote browser-use-cdp-orchestrator"
+  },
+  "files": ["dist"],
+  "publishConfig": { "access": "public", "provenance": true },
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "strict": false,
+    "credentials": [
+      "dist/credentials/BrowserUseOrchestratorApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/BrowserUseOrchestrator/BrowserUseOrchestrator.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@emnapi/core": "1.11.0",
+    "@emnapi/runtime": "1.11.0",
+    "@n8n/node-cli": "*",
+    "@types/node": "^22.10.0",
+    "eslint": "9.29.0",
+    "prettier": "3.6.2",
+    "release-it": "^19.0.4",
+    "tsx": "^4.20.6",
+    "typescript": "5.9.2",
+    "zod": "^4.4.3"
+  },
+  "peerDependencies": { "n8n-workflow": "*" }
 }

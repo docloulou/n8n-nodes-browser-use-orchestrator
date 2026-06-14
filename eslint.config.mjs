@@ -1,3 +1,6 @@
-import { config } from '@n8n/node-cli/eslint';
+import { configWithoutCloudSupport } from '@n8n/node-cli/eslint';
 
-export default config;
+export default [
+	{ ignores: ['browser-use-cdp-orchestrator/**'] },
+	...configWithoutCloudSupport,
+];

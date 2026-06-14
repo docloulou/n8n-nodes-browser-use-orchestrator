@@ -1,5 +1,5 @@
 // AUTO-GÉNÉRÉ par scripts/generate-schemas.ts — NE PAS ÉDITER À LA MAIN.
-// Source : nodes/BrowserUseOrchestrator/orchestrator/config.ts (schémas Zod).
+// Source : browser-use-cdp-orchestrator/config.ts (schémas Zod du submodule).
 // Régénérer : npm run generate (ou npm run build).
 
 export type JsonSchemaObject = Record<string, unknown>;

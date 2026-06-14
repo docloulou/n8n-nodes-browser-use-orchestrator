@@ -22,5 +22,5 @@
 		"outDir": "./dist/"
 	},
 	"include": ["credentials/**/*", "nodes/**/*", "nodes/**/*.json", "package.json"],
-	"exclude": ["node_modules", "dist", "nodes/**/orchestrator/**", "scripts/**"]
+	"exclude": ["node_modules", "dist", "browser-use-cdp-orchestrator", "scripts/**"]
 }
