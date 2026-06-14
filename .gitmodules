@@ -1,0 +1,3 @@
+[submodule "browser-use-cdp-orchestrator"]
+	path = browser-use-cdp-orchestrator
+	url = https://github.com/docloulou/browser-use-cdp-orchestrator.git
