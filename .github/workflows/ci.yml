@@ -17,6 +17,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          submodules: true
+          # Le GITHUB_TOKEN d'un repo public n'a pas accès aux repos privés.
+          # On utilise un PAT (scope "repo") stocké dans les secrets du repo
+          # pour cloner le submodule browser-use-cdp-orchestrator (privé).
+          # Créer un PAT : https://github.com/settings/tokens → "repo" → copier
+          # puis Settings → Secrets and variables → Actions → New secret : SUBMODULE_PAT
+          token: ${{ secrets.SUBMODULE_PAT }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v5

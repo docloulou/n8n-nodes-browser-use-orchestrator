@@ -68,6 +68,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          submodules: true
+          # Le GITHUB_TOKEN d'un repo public n'a pas accès aux repos privés.
+          # On utilise un PAT (scope "repo") pour cloner le submodule privé.
+          token: ${{ secrets.SUBMODULE_PAT }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v5
